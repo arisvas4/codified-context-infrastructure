@@ -1,9 +1,9 @@
 # Case Study Evidence Files
 
 JSONL conversation transcripts referenced in Section 4.8 of the manuscript.
-Preserved here because the source directory (`.claude/projects/`) is periodically wiped.
+The raw JSONL files (18 files, ~149 MB) are preserved separately and not included in this repository due to size and privacy considerations.
 
-Source: `/Users/meivas/.claude/projects/-Users-meivas-Documents-game-project/`
+**Anonymized excerpts** from each case study are available in [`../case-study-excerpts/`](../case-study-excerpts/) with key interaction turns and architectural annotations.
 
 ## CS1: CombatRng Determinism -- Agent as Domain Expert
 

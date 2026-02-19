@@ -26,6 +26,7 @@ analyze_impact.py           Correlate sessions with git commits
 | `extract_prompts.py` | ~706 | Core extraction: parse JSONL, classify prompts into 25 categories, compute token costs, detect agent spawns |
 | `reconstruct_sessions.py` | ~811 | Reconstruct lost gap period (Dec 15 -- Jan 15) from git commits, todo files, and shell snapshots |
 | `analyze_impact.py` | ~300 | Correlate prompt timestamps with git commits to identify high-impact interactions |
+| `extract_session_aggregates.py` | ~140 | Aggregate per-prompt data into per-session statistics with anonymized session IDs |
 
 ### Running the Scripts
 
@@ -57,6 +58,36 @@ python analyze_impact.py --top 20
 |------|-------------|
 | `samples/prompts_monthly.csv` | Monthly usage summary (session counts, prompt counts, token usage by month) |
 | `samples/key_plans.csv` | Planning session records showing multi-agent orchestration patterns |
+| `samples/sessions_aggregate.csv` | Per-session aggregate statistics (294 sessions, anonymized IDs, no prompt text) |
+
+### Session Aggregate Schema (sessions_aggregate.csv)
+
+Per-session statistics with anonymized session IDs (SHA-256 hashed). Contains no prompt text or file paths. Enables independent verification of paper claims in Section 4.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `session_id` | string | Anonymized 12-char hex hash (not the original UUID) |
+| `date` | YYYY-MM-DD | Earliest date in session |
+| `prompt_count` | int | Number of human prompts in session |
+| `total_word_count` | int | Sum of word counts across all prompts |
+| `median_word_count` | int | Median prompt word count for session |
+| `category_distribution` | JSON | Category counts, e.g. `{"networking":5,"combat":3}` |
+| `total_tokens_in` | int | Total input tokens consumed |
+| `total_tokens_out` | int | Total output tokens generated |
+| `total_cache_read` | int | Total cache read tokens |
+| `total_cache_create` | int | Total cache creation tokens |
+| `total_cost_usd` | float | Total session cost in USD |
+| `total_tool_calls` | int | Total tool invocations |
+| `total_agents_spawned` | int | Total sub-agent invocations |
+| `agent_types_used` | string | Comma-separated unique agent types |
+| `model` | string | Primary model used |
+| `platform` | string | Operating system |
+
+**Verifiable claims:**
+- Session count (~294 sessions including reconstructed records)
+- Total cost (~$693, avg ~$2.36/session)
+- Category distribution (networking dominant at ~700 prompts)
+- Agent invocation patterns (98 sessions with agents spawned)
 
 ### CSV Schema (prompts.csv)
 
@@ -101,9 +132,24 @@ The classification system uses keyword matching with priority ordering:
 | documentation | doc, readme, comment, explain |
 | ... | (15 more categories in extract_prompts.py) |
 
+## Case Study Excerpts
+
+The `case-study-excerpts/` directory contains anonymized conversation excerpts from 6 case studies referenced in Section 4.8 of the paper. Each file contains 2-3 key interaction turns demonstrating a specific architectural pattern, with annotations explaining the mechanism at work.
+
+| File | Pattern Demonstrated |
+|------|---------------------|
+| `cs1-combatrng-determinism.md` | Specialized agent as domain expert (Layer 3) |
+| `cs2-ui-sync-routing.md` | Captured experience as reusable knowledge (Layer 2) |
+| `cs3-boss-fight-framework.md` | Architectural inheritance via context documents (Layer 2 + 3) |
+| `cs4-save-system-documentation.md` | Coordination document discovery and reuse (Layer 2) |
+| `cs5-coordinate-wizard.md` | Read-only diagnostic agent with domain expertise (Layer 3) |
+| `cs6-drop-system.md` | Gap detection triggering organic documentation growth (Layer 2) |
+
+**Anonymization:** Absolute file paths stripped to relative form, no personal information. Tool calls, code snippets, and agent names preserved to demonstrate the architectural patterns.
+
 ## Case Study Evidence
 
-The `case-study-evidence/` directory contains a README indexing the JSONL conversation transcripts referenced in Section 4.8 of the paper. The actual JSONL files (18 files, ~149 MB) are preserved separately and not included here.
+The `case-study-evidence/` directory contains a README indexing the JSONL conversation transcripts referenced in Section 4.8 of the paper. The actual JSONL files (18 files, ~149 MB) are preserved separately and not included here. See `case-study-excerpts/` above for anonymized key interactions from each case study.
 
 ## Key Statistics (from the paper)
 
