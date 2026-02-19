@@ -1,6 +1,6 @@
 # Context7 MCP Server
 
-A context-retrieval MCP (Model Context Protocol) server that implements **Layer 2** of the codified context architecture. It gives Claude Code on-demand access to project architecture knowledge without loading everything into the prompt.
+A context-retrieval MCP (Model Context Protocol) server that implements **Layer 2** of the codified context infrastructure. It gives Claude Code on-demand access to project architecture knowledge without loading everything into the prompt.
 
 ## What It Does
 
